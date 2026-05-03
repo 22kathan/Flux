@@ -6,14 +6,18 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cat's Cradle — Laser Hands (v3) [Neon Beams]</title>
+  <meta name="description" content="Laser Hands — Real-time interactive hand tracking with neon laser beams, drawing mode, and OS control. Built with MediaPipe." />
+  <title>Laser Hands — Interactive Hand Tracking Experience</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       overflow: hidden;
-      background: #080818;
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #050510;
+      font-family: 'Inter', system-ui, sans-serif;
       width: 100vw;
       height: 100vh;
     }
@@ -67,41 +71,113 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: #0a0a1a;
-      transition: opacity 0.8s ease;
+      background: #050510;
+      transition: opacity 1s cubic-bezier(.4,0,.2,1);
     }
     #splash.hidden { opacity: 0; pointer-events: none; }
+    #splash-particles { position: absolute; inset: 0; z-index: 0; }
+    #splash .splash-content { position: relative; z-index: 1; text-align: center; }
+
+    #splash .version-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 999px;
+      background: rgba(100,180,255,0.1);
+      border: 1px solid rgba(100,180,255,0.2);
+      color: #64b4ff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 1.5px;
+      margin-bottom: 1.2rem;
+      text-transform: uppercase;
+    }
 
     #splash h1 {
-      font-size: 2.4rem;
-      font-weight: 700;
-      background: linear-gradient(90deg, #00ffe5, #ff00ff, #ffe600);
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #00ffe5 0%, #64b4ff 30%, #ff00ff 60%, #ffe600 100%);
+      background-size: 300% 100%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      animation: gradientShift 4s ease infinite;
+      margin-bottom: 0.4rem;
+      letter-spacing: 4px;
+      filter: drop-shadow(0 0 30px rgba(0,255,229,0.3));
+    }
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    #splash .tagline {
+      font-family: 'JetBrains Mono', monospace;
+      color: rgba(255,255,255,0.4);
+      font-size: clamp(0.7rem, 1.5vw, 0.9rem);
       margin-bottom: 0.6rem;
       letter-spacing: 2px;
     }
-    #splash p {
-      color: rgba(255,255,255,0.5);
-      font-size: 0.95rem;
-      margin-bottom: 2rem;
+    #splash .features {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 1.5rem 0 2.2rem;
     }
+    #splash .feature-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.5);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.5px;
+      transition: all 0.3s;
+    }
+    #splash .feature-chip:hover {
+      background: rgba(100,180,255,0.08);
+      border-color: rgba(100,180,255,0.2);
+      color: #64b4ff;
+    }
+    #splash .feature-chip .chip-icon { font-size: 0.9rem; }
     #start-btn {
-      padding: 14px 44px;
+      padding: 16px 52px;
       font-size: 1rem;
       font-weight: 600;
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 2px;
       border: none;
       border-radius: 999px;
       cursor: pointer;
-      color: #0a0a1a;
+      color: #050510;
+      background: linear-gradient(135deg, #00ffe5, #64b4ff, #ff00ff);
+      background-size: 200% 100%;
+      box-shadow: 0 0 40px rgba(0,255,229,0.25), 0 0 80px rgba(255,0,255,0.1), inset 0 1px 0 rgba(255,255,255,0.2);
+      transition: transform 0.3s cubic-bezier(.4,0,.2,1), box-shadow 0.3s, background-position 0.5s;
+      position: relative;
+      overflow: hidden;
+    }
+    #start-btn::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 999px;
       background: linear-gradient(135deg, #00ffe5, #ff00ff);
-      box-shadow: 0 0 30px rgba(0,255,229,0.3), 0 0 60px rgba(255,0,255,0.15);
-      transition: transform 0.2s, box-shadow 0.2s;
+      z-index: -1;
+      opacity: 0;
+      filter: blur(15px);
+      transition: opacity 0.3s;
     }
     #start-btn:hover {
-      transform: scale(1.06);
-      box-shadow: 0 0 40px rgba(0,255,229,0.5), 0 0 80px rgba(255,0,255,0.25);
+      transform: scale(1.08) translateY(-2px);
+      background-position: 100% 0;
+      box-shadow: 0 0 50px rgba(0,255,229,0.4), 0 0 100px rgba(255,0,255,0.2), 0 8px 32px rgba(0,0,0,0.4);
     }
+    #start-btn:hover::after { opacity: 1; }
+    #start-btn:active { transform: scale(1.02); }
 
     /* ── HUD status ── */
     #hud {
@@ -110,17 +186,23 @@
       z-index: 20;
       color: rgba(255,255,255,0.35);
       font-size: 0.75rem;
-      font-family: 'Consolas', monospace;
+      font-family: 'JetBrains Mono', monospace;
       letter-spacing: 1px;
       pointer-events: none;
       display: flex;
       flex-direction: column;
       gap: 6px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: rgba(5,5,16,0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.05);
     }
     #fps-counter {
       color: #00ffe5;
-      font-weight: bold;
-      opacity: 0.8;
+      font-weight: 600;
+      opacity: 0.9;
       font-size: 0.68rem;
     }
     .hand-status {
@@ -130,6 +212,7 @@
       margin-top: 4px;
       font-size: 0.6rem;
       color: rgba(255,255,255,0.2);
+      transition: color 0.3s;
     }
     .hand-status.active { color: #00ffe5; }
     .hand-icon {
@@ -137,6 +220,10 @@
       border: 1px solid currentColor;
       border-radius: 2px;
       display: inline-block;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .hand-status.active .hand-icon {
+      box-shadow: 0 0 6px currentColor;
     }
     #hud .dot {
       display: inline-block;
@@ -152,6 +239,18 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.3; }
     }
+    /* ── Gesture Stats ── */
+    #gesture-stats {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.58rem;
+      color: rgba(255,255,255,0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    #gesture-stats span { color: rgba(100,180,255,0.6); font-weight: 600; }
 
     /* ── Draw-mode HUD (bottom center status) ── */
     #draw-hud {
@@ -170,7 +269,7 @@
       -webkit-backdrop-filter: blur(14px);
       border: 1px solid rgba(255,255,255,0.08);
       box-shadow: 0 0 30px rgba(100, 180, 255, 0.12);
-      font-family: 'Consolas', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 0.72rem;
       letter-spacing: 1.2px;
       color: rgba(255,255,255,0.55);
@@ -379,16 +478,147 @@
       color: #00ffe5;
       font-weight: bold;
     }
+    /* ── Toast Notifications ── */
+    #toast-container {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .toast {
+      padding: 10px 24px;
+      border-radius: 10px;
+      background: rgba(10,10,26,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(100,180,255,0.15);
+      color: rgba(255,255,255,0.8);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.8px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+      animation: toastIn 0.3s ease-out, toastOut 0.3s ease-in 2.2s forwards;
+      white-space: nowrap;
+    }
+    @keyframes toastIn { from { opacity:0; transform:translateY(-12px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes toastOut { from { opacity:1; } to { opacity:0; transform:translateY(-8px); } }
+
+    /* ── Toolbar (fullscreen, screenshot) ── */
+    #toolbar {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 30;
+      display: none;
+      gap: 8px;
+    }
+    #toolbar.visible { display: flex; }
+    .toolbar-btn {
+      width: 40px; height: 40px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      background: rgba(10,10,26,0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.4);
+      transition: all 0.2s;
+    }
+    .toolbar-btn:hover {
+      background: rgba(100,180,255,0.1);
+      border-color: rgba(100,180,255,0.25);
+      color: #64b4ff;
+      transform: scale(1.08);
+    }
+
+    /* ── Keyboard Shortcuts Panel ── */
+    #shortcuts-hint {
+      position: fixed;
+      bottom: 70px;
+      left: 20px;
+      z-index: 30;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: rgba(10,10,26,0.8);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.06);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: rgba(255,255,255,0.3);
+      animation: panelIn 0.2s ease-out;
+    }
+    #shortcuts-hint.visible { display: flex; }
+    .shortcut-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .shortcut-key {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.5);
+      font-size: 0.58rem;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    /* ── Mobile Responsive ── */
+    @media (max-width: 768px) {
+      #splash h1 { letter-spacing: 2px; }
+      #splash .features { gap: 10px; padding: 0 16px; }
+      #splash .feature-chip { font-size: 0.6rem; padding: 5px 10px; }
+      #hud { top: 8px; left: 8px; padding: 8px 12px; font-size: 0.65rem; }
+      #settings-btn { width: 38px; height: 38px; font-size: 1rem; bottom: 14px; right: 14px; }
+      #settings-panel { width: 180px; bottom: 62px; right: 14px; }
+      #toolbar { bottom: 14px; left: 14px; }
+      .toolbar-btn { width: 36px; height: 36px; font-size: 0.9rem; }
+      #os-instructions { top: auto; bottom: 80px; right: 14px; left: 14px; max-width: none; }
+      #draw-hud { bottom: 18px; padding: 6px 16px; font-size: 0.65rem; }
+    }
+    @media (max-width: 480px) {
+      #splash .features { flex-direction: column; align-items: center; }
+      #start-btn { padding: 14px 36px; font-size: 0.85rem; }
+    }
   </style>
 </head>
 <body>
 
   <!-- Splash Screen -->
   <div id="splash">
-    <h1>LASER HANDS</h1>
-    <p>Cat's Cradle — Interactive Hand Tracking [90 FPS]</p>
-    <button id="start-btn">LAUNCH EXPERIENCE</button>
+    <canvas id="splash-particles"></canvas>
+    <div class="splash-content">
+      <div class="version-badge">v4.0 · MediaPipe Hands</div>
+      <h1>LASER HANDS</h1>
+      <p class="tagline">Interactive Hand Tracking Experience</p>
+      <div class="features">
+        <div class="feature-chip"><span class="chip-icon">⚡</span> Laser Beams</div>
+        <div class="feature-chip"><span class="chip-icon">✏️</span> Air Writing</div>
+        <div class="feature-chip"><span class="chip-icon">🖱️</span> OS Control</div>
+        <div class="feature-chip"><span class="chip-icon">📸</span> Screenshot</div>
+      </div>
+      <button id="start-btn">LAUNCH</button>
+    </div>
   </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
 
   <!-- Overlays -->
   <div id="crt-overlay"></div>
@@ -400,6 +630,11 @@
     <div id="fps-counter">FPS: 00</div>
     <div class="hand-status" id="hand-l-status"><span class="hand-icon"></span> LEFT HAND</div>
     <div class="hand-status" id="hand-r-status"><span class="hand-icon"></span> RIGHT HAND</div>
+    <div id="gesture-stats">
+      <div>BEAMS <span id="stat-beams">0</span></div>
+      <div>TOUCHES <span id="stat-touches">0</span></div>
+      <div>STROKES <span id="stat-strokes">0</span></div>
+    </div>
   </div>
 
   <!-- Draw-mode status HUD -->
@@ -433,6 +668,23 @@
 
   <!-- Settings gear button -->
   <button id="settings-btn" title="Settings">⚙️</button>
+
+  <!-- Toolbar (bottom-left) -->
+  <div id="toolbar">
+    <button class="toolbar-btn" id="fullscreen-btn" title="Fullscreen (F)">⛶</button>
+    <button class="toolbar-btn" id="screenshot-btn" title="Screenshot (S)">📸</button>
+    <button class="toolbar-btn" id="shortcuts-btn" title="Keyboard Shortcuts (?)">⌨</button>
+  </div>
+
+  <!-- Keyboard Shortcuts Panel -->
+  <div id="shortcuts-hint">
+    <div class="shortcut-row"><span class="shortcut-key">1</span> Laser Mode</div>
+    <div class="shortcut-row"><span class="shortcut-key">2</span> Writing Mode</div>
+    <div class="shortcut-row"><span class="shortcut-key">3</span> OS Control</div>
+    <div class="shortcut-row"><span class="shortcut-key">F</span> Fullscreen</div>
+    <div class="shortcut-row"><span class="shortcut-key">S</span> Screenshot</div>
+    <div class="shortcut-row"><span class="shortcut-key">C</span> Clear Canvas</div>
+  </div>
 
   <!-- Settings panel -->
   <div id="settings-panel">
@@ -1168,6 +1420,7 @@
         
         strokes.push(currentStroke);
         bakedCtx.drawImage(drawCanvas, 0, 0);
+        updateStats(0, 0, 1);
       }
       
       drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
@@ -1668,7 +1921,7 @@
         ctx.fillStyle = "#000000";
         ctx.fillRect(0, 0, W, H);
       } else {
-        ctx.fillStyle = "#0a0a14";
+        ctx.fillStyle = "#050510";
         ctx.fillRect(0, 0, W, H);
 
         // Camera feed (mirrored) — no save/restore overhead
@@ -1762,10 +2015,12 @@
             // Secondary burst with white for flash effect
             spawnParticles(mx, my, COLORS.white, 8);
             // playZap(i); // Muted
+            updateStats(0, 1, 0);
           }
         }
 
         activeBeamCount = beamsThisFrame;
+        if (beamsThisFrame > 0) updateStats(beamsThisFrame, 0, 0);
         // updateHum(activeBeamCount); // Muted
 
         // ── Bonus: cross-connect web for richer cradle look ──
@@ -1808,6 +2063,120 @@
     }
 
     /* ────────────────────────────────────────────
+       Gesture Stats
+    ──────────────────────────────────────────── */
+    let totalBeams = 0, totalTouches = 0, totalStrokesCount = 0;
+    const statBeamsEl = document.getElementById('stat-beams');
+    const statTouchesEl = document.getElementById('stat-touches');
+    const statStrokesEl = document.getElementById('stat-strokes');
+
+    function updateStats(beams, touches, strokesDelta) {
+      totalBeams += beams;
+      totalTouches += touches;
+      totalStrokesCount += strokesDelta;
+      if (statBeamsEl) statBeamsEl.textContent = totalBeams;
+      if (statTouchesEl) statTouchesEl.textContent = totalTouches;
+      if (statStrokesEl) statStrokesEl.textContent = totalStrokesCount;
+    }
+
+    /* ────────────────────────────────────────────
+       Toast Notification System
+    ──────────────────────────────────────────── */
+    const toastContainer = document.getElementById('toast-container');
+    function showToast(msg) {
+      const t = document.createElement('div');
+      t.className = 'toast';
+      t.textContent = msg;
+      toastContainer.appendChild(t);
+      setTimeout(() => t.remove(), 2600);
+    }
+
+    /* ────────────────────────────────────────────
+       Splash Particle Animation
+    ──────────────────────────────────────────── */
+    const splashCanvas = document.getElementById('splash-particles');
+    const splashCtx = splashCanvas.getContext('2d');
+    let splashAnimId = null;
+    function initSplashParticles() {
+      splashCanvas.width = window.innerWidth;
+      splashCanvas.height = window.innerHeight;
+      const pts = [];
+      for (let i = 0; i < 60; i++) {
+        pts.push({
+          x: Math.random() * splashCanvas.width,
+          y: Math.random() * splashCanvas.height,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          r: 1 + Math.random() * 2,
+          a: 0.2 + Math.random() * 0.4,
+        });
+      }
+      function animSplash() {
+        splashCtx.clearRect(0, 0, splashCanvas.width, splashCanvas.height);
+        for (const p of pts) {
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0) p.x = splashCanvas.width;
+          if (p.x > splashCanvas.width) p.x = 0;
+          if (p.y < 0) p.y = splashCanvas.height;
+          if (p.y > splashCanvas.height) p.y = 0;
+          splashCtx.beginPath();
+          splashCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          splashCtx.fillStyle = `rgba(100,180,255,${p.a})`;
+          splashCtx.fill();
+        }
+        // Draw connection lines between nearby particles
+        for (let i = 0; i < pts.length; i++) {
+          for (let j = i + 1; j < pts.length; j++) {
+            const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+            const d = Math.sqrt(dx*dx + dy*dy);
+            if (d < 120) {
+              splashCtx.beginPath();
+              splashCtx.moveTo(pts[i].x, pts[i].y);
+              splashCtx.lineTo(pts[j].x, pts[j].y);
+              splashCtx.strokeStyle = `rgba(100,180,255,${0.08 * (1 - d/120)})`;
+              splashCtx.lineWidth = 0.5;
+              splashCtx.stroke();
+            }
+          }
+        }
+        splashAnimId = requestAnimationFrame(animSplash);
+      }
+      animSplash();
+    }
+    initSplashParticles();
+    window.addEventListener('resize', () => {
+      if (splashCanvas) { splashCanvas.width = window.innerWidth; splashCanvas.height = window.innerHeight; }
+    });
+
+    /* ────────────────────────────────────────────
+       Screenshot & Fullscreen
+    ──────────────────────────────────────────── */
+    function takeScreenshot() {
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvas.width;
+      tempCanvas.height = canvas.height;
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.drawImage(canvas, 0, 0);
+      tempCtx.drawImage(bakedCanvas, 0, 0);
+      tempCtx.drawImage(drawCanvas, 0, 0);
+      const link = document.createElement('a');
+      link.download = `laser-hands-${Date.now()}.png`;
+      link.href = tempCanvas.toDataURL('image/png');
+      link.click();
+      showToast('📸 Screenshot saved!');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+        showToast('⛶ Fullscreen enabled');
+      } else {
+        document.exitFullscreen();
+        showToast('⛶ Exited fullscreen');
+      }
+    }
+
+    /* ────────────────────────────────────────────
        Boot
     ──────────────────────────────────────────── */
     startBtn.addEventListener("click", async () => {
@@ -1820,13 +2189,18 @@
         await video.play();
 
         splash.classList.add("hidden");
+        if (splashAnimId) { cancelAnimationFrame(splashAnimId); splashAnimId = null; }
         hud.style.display = "block";
         settingsBtn.style.display = "block";
+        document.getElementById('toolbar').classList.add('visible');
 
         // initAudio(); // Muted at user request
         initMediaPipe();
         initSettingsPanel();
+        initToolbar();
+        initKeyboardShortcuts();
         requestAnimationFrame(render);
+        showToast('✅ Camera connected — tracking started');
       } catch (err) {
         alert("Camera access is required.\n\n" + err.message);
       }
@@ -2022,6 +2396,46 @@ if %errorlevel% neq 0 (
         if (!settingsPanel.contains(e.target) && e.target !== settingsBtn) {
           settingsPanel.classList.remove('visible');
           settingsBtn.classList.remove('open');
+        }
+      });
+    }
+
+    /* ────────────────────────────────────────────
+       Toolbar (Fullscreen, Screenshot, Shortcuts)
+    ──────────────────────────────────────────── */
+    function initToolbar() {
+      document.getElementById('fullscreen-btn').addEventListener('click', toggleFullscreen);
+      document.getElementById('screenshot-btn').addEventListener('click', takeScreenshot);
+      document.getElementById('shortcuts-btn').addEventListener('click', () => {
+        document.getElementById('shortcuts-hint').classList.toggle('visible');
+      });
+    }
+
+    /* ────────────────────────────────────────────
+       Keyboard Shortcuts
+    ──────────────────────────────────────────── */
+    function initKeyboardShortcuts() {
+      document.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        const key = e.key.toLowerCase();
+        if (key === '1') {
+          document.getElementById('mode-laser').click();
+          showToast('⚡ Laser Mode');
+        } else if (key === '2') {
+          document.getElementById('mode-write').click();
+          showToast('✏️ Writing Mode');
+        } else if (key === '3') {
+          document.getElementById('mode-os').click();
+          showToast('🖱️ OS Control Mode');
+        } else if (key === 'f') {
+          toggleFullscreen();
+        } else if (key === 's') {
+          e.preventDefault();
+          takeScreenshot();
+        } else if (key === 'c') {
+          clearDrawCanvas();
+          spawnParticles(canvas.width / 2, canvas.height / 2, COLORS.white, 40);
+          showToast('🗑️ Canvas cleared');
         }
       });
     }
