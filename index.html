@@ -2160,7 +2160,7 @@
       tempCtx.drawImage(bakedCanvas, 0, 0);
       tempCtx.drawImage(drawCanvas, 0, 0);
       const link = document.createElement('a');
-      link.download = `laser-hands-${Date.now()}.png`;
+      link.download = `flux-${Date.now()}.png`;
       link.href = tempCanvas.toDataURL('image/png');
       link.click();
       showToast('📸 Screenshot saved!');
@@ -2282,10 +2282,10 @@
         setTimeout(() => {
           try {
             const batScript = `@echo off
-title Laser Hands OS Setup
+title Flux OS Setup
 color 0F
 echo ==================================================
-echo         LASER HANDS OS DRIVER INSTALLATION
+echo         FLUX OS DRIVER INSTALLATION
 echo ==================================================
 echo.
 echo [1/3] Checking Python installation...
