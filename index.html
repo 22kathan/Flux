@@ -2315,7 +2315,7 @@ timeout /t 1 >nul
 echo [3/3] Downloading Standalone OS Controller...
 echo --------------------------------------------------
 :: Download script to current folder
-curl -L -O https://raw.githubusercontent.com/22kathan/portfolio/main/laser-hands/os_controller.py
+curl -L -O https://raw.githubusercontent.com/22kathan/portfolio/main/flux/os_controller.py
 echo --------------------------------------------------
 powershell -Command "Write-Host '      [OK] Standalone script ready.' -ForegroundColor Green"
 echo.
@@ -2341,14 +2341,14 @@ if %errorlevel% neq 0 (
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'Install_and_Run_Laser_Hands.bat';
+            a.download = 'Install_and_Run_Flux.bat';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
             setTimeout(() => {
-                alert("The setup script has been downloaded!\\n\\n1. Open 'Install_and_Run_Laser_Hands.bat' from your downloads.\\n2. Keep the terminal window open.\\n3. The browser will automatically connect once the script starts.");
+                alert("The setup script has been downloaded!\\n\\n1. Open 'Install_and_Run_Flux.bat' from your downloads.\\n2. Keep the terminal window open.\\n3. The browser will automatically connect once the script starts.");
             }, 500);
           } catch(e) {
             console.error(e);
