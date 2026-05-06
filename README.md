@@ -78,4 +78,4 @@ This project is open-source. Feel free to explore, modify, and build upon it!
 
 ---
 
-*Developed with ❤️ by [Kathan Gandhi](https://22kathan.github.io/portfolio)*
+*Developed with ❤️ by [Kathan Gadhiya](https://22kathan.github.io/portfolio)*
