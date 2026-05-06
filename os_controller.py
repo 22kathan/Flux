@@ -139,7 +139,7 @@ async def main():
     try:
         async with websockets.serve(handle_connection, "localhost", 8765):
             print("\n" + "="*50)
-            print("   LASER HANDS OS DAEMON IS ACTIVE")
+            print("   FLUX OS DAEMON IS ACTIVE")
             print("="*50)
             print("✓ WebSocket Server: ws://localhost:8765")
             print("\n  Controls:")

@@ -1,18 +1,18 @@
-# 🎯 Laser Hands - Standalone Setup Guide for Users
+# 🎯 Flux - Standalone Setup Guide for Users
 
-This guide helps users on **any Windows computer** set up and run **Laser Hands** with just one batch file!
+This guide helps users on **any Windows computer** set up and run **Flux** with just one batch file!
 
 ---
 
 ## **Quick Start (3 Steps)**
 
 ### **Step 1: Download the Setup File**
-Download `Setup-and-Launch-Laser-Hands.bat` from:
-- **GitHub Releases:** https://github.com/22kathan/laser-hands/releases
+Download `Setup-and-Launch-Flux.bat` from:
+- **GitHub Releases:** https://github.com/22kathan/flux/releases
 - **Portfolio Website:** https://22kathan.github.io/portfolio
 
 ### **Step 2: Run the Batch File**
-1. **Right-click** the `Setup-and-Launch-Laser-Hands.bat` file
+1. **Right-click** the `Setup-and-Launch-Flux.bat` file
 2. Select **"Run as Administrator"** ⚠️ (Important for Python installation)
 3. Click **"Yes"** when prompted by Windows
 
@@ -21,7 +21,7 @@ The batch file will automatically:
 ✅ Check if Python 3.11 is installed  
 ✅ Download Python from python.org (with active timer and progress bar)  
 ✅ Install Python silently  
-✅ Download Laser Hands project files  
+✅ Download Flux project files  
 ✅ Install Python dependencies  
 ✅ Launch the application  
 
@@ -32,7 +32,7 @@ The batch file will automatically:
 ## **What This Batch File Does**
 
 ```
-Setup-and-Launch-Laser-Hands.bat
+Setup-and-Launch-Flux.bat
     ↓
 [Check Python]
     ↓ (if not installed)
@@ -40,11 +40,11 @@ Setup-and-Launch-Laser-Hands.bat
     ↓
 [Install Python automatically]
     ↓
-[Download Laser Hands from GitHub]
+[Download Flux from GitHub]
     ↓
 [Install Python dependencies (pyautogui, websockets)]
     ↓
-[Launch Laser Hands application]
+[Launch Flux application]
 ```
 
 ---
@@ -91,19 +91,19 @@ python -m pip install -r requirements.txt
 
 After setup, files are installed at:
 ```
-C:\Users\[YourUsername]\Documents\Laser Hands\
+C:\Users\[YourUsername]\Documents\Flux\
     ├── index.html                          (Web interface)
     ├── os_controller.py                    (Python backend)
-    ├── Launch Laser Hands.bat              (Regular launcher)
+    ├── Launch Flux.bat                     (Regular launcher)
     ├── requirements.txt                    (Dependencies)
     └── ...other files
 ```
 
-To run again later, use: **Launch Laser Hands.bat** (in Documents/Laser Hands/)
+To run again later, use: **Launch Flux.bat** (in Documents/Flux/)
 
 ---
 
-## **How to Use Laser Hands**
+## **How to Use Flux**
 
 1. **Start**: Run the batch file → Browser opens → Allow camera access
 2. **Gestures**:
@@ -118,8 +118,8 @@ To run again later, use: **Launch Laser Hands.bat** (in Documents/Laser Hands/)
 
 ## **Support & Issues**
 
-- **Documentation**: https://github.com/22kathan/laser-hands
-- **Report Issues**: https://github.com/22kathan/laser-hands/issues
+- **Documentation**: https://github.com/22kathan/flux
+- **Report Issues**: https://github.com/22kathan/flux/issues
 - **Portfolio**: https://22kathan.github.io/portfolio
 
 ---
@@ -128,15 +128,15 @@ To run again later, use: **Launch Laser Hands.bat** (in Documents/Laser Hands/)
 
 | File | Purpose |
 |---|---|
-| `Setup-and-Launch-Laser-Hands.bat` | **One-click setup** for new users (this file) |
-| `Launch Laser Hands.bat` | **Regular launcher** for returning users |
+| `Setup-and-Launch-Flux.bat` | **One-click setup** for new users (this file) |
+| `Launch Flux.bat` | **Regular launcher** for returning users |
 | `os_controller.py` | Hand tracking → OS control backend |
 | `index.html` | Web interface with hand tracking |
 | `requirements.txt` | Python dependencies |
 
 ---
 
-**👍 First time? Use `Setup-and-Launch-Laser-Hands.bat`**  
-**🔄 Next time? Use `Launch Laser Hands.bat` (in Documents/Laser Hands/)**
+**👍 First time? Use `Setup-and-Launch-Flux.bat`**  
+**🔄 Next time? Use `Launch Flux.bat` (in Documents/Flux/)**
 
 Enjoy! 🎮✨

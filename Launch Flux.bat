@@ -1,14 +1,14 @@
 @echo off
 setlocal enabledelayedexpansion
-title Laser Hands Launcher
+title Flux Launcher
 echo =========================================
-echo       Starting Laser Hands Project
+echo       Starting Flux Project
 echo =========================================
 echo.
 
 :: Check if running from auto-startup after crash/restart
 set "startup_mode=0"
-for /f "tokens=*" %%A in ('powershell -NoProfile -Command "try { Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'LaserHandsStartup' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty LaserHandsStartup } catch {}" 2^>nul') do (
+for /f "tokens=*" %%A in ('powershell -NoProfile -Command "try { Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'FluxStartup' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FluxStartup } catch {}" 2^>nul') do (
     if "%%A" neq "" (
         set "startup_mode=1"
     )
@@ -169,10 +169,10 @@ if errorlevel 1 (
                 
                 :: Create a scheduled task to run this batch file on next startup
                 set "script_path=%~f0"
-                powershell -NoProfile -Command "try { New-Item -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'LaserHandsStartup' -Value '\"!script_path!\"' -Force | Out-Null; Write-Host 'Auto-start registered'; exit 0 } catch { exit 1 }" >nul 2>&1
+                powershell -NoProfile -Command "try { New-Item -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'FluxStartup' -Value '\"!script_path!\"' -Force | Out-Null; Write-Host 'Auto-start registered'; exit 0 } catch { exit 1 }" >nul 2>&1
                 
                 :: Immediate shutdown (0 seconds) with auto-restart
-                shutdown /r /t 0 /c "Laser Hands: Auto-restart to activate Python" /d p:0:0
+                shutdown /r /t 0 /c "Flux: Auto-restart to activate Python" /d p:0:0
                 exit /b 0
             )
         ) else (
@@ -196,7 +196,7 @@ if errorlevel 1 (
         echo   3. Try manual installation: https://www.python.org/downloads/
         echo.
         echo For detailed help, visit:
-        echo   https://github.com/22kathan/laser-hands
+        echo   https://github.com/22kathan/flux
         echo.
         pause
         exit /b 1
@@ -226,7 +226,7 @@ start "OS Controller" cmd /c "python os_controller.py"
 
 echo [2/3] Starting Local Web Server (UI)...
 :: Start Python's built-in HTTP server on port 8000 in the background
-start /b "Laser Hands UI Server" python -m http.server 8000
+start /b "Flux UI Server" python -m http.server 8000
 
 echo [3/3] Opening the Experience...
 :: Wait a brief moment to ensure both servers (WebSocket and HTTP) are initialized
@@ -240,6 +240,6 @@ echo Launch sequence complete. You can close this window.
 timeout /t 3 > NUL
 
 :: Clean up startup registry entry if it exists
-powershell -NoProfile -Command "try { Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'LaserHandsStartup' -ErrorAction SilentlyContinue | Out-Null; Write-Host '[OK] Startup entry cleaned up' } catch {}" >nul 2>&1
+powershell -NoProfile -Command "try { Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'FluxStartup' -ErrorAction SilentlyContinue | Out-Null; Write-Host '[OK] Startup entry cleaned up' } catch {}" >nul 2>&1
 
 exit
