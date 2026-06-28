@@ -6,8 +6,8 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Flux — Real-time interactive hand tracking with neon laser beams, drawing mode, and OS control. Built with MediaPipe." />
-  <title>Flux — Interactive Hand Tracking Experience</title>
+  <meta name="description" content="Flux v5.0 — Neural hand tracking with deep learning gesture recognition, NLP voice commands, and AI-powered session analytics. Built with MediaPipe + TensorFlow.js." />
+  <title>Flux v5.0 — Neural Interactive Hand Tracking</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -596,6 +596,267 @@
       #splash .features { flex-direction: column; align-items: center; }
       #start-btn { padding: 14px 36px; font-size: 0.85rem; }
     }
+
+    /* ══════════════════════════════════════════════
+       NEURAL GESTURE HUD — Floating gesture label
+    ══════════════════════════════════════════════ */
+    #gesture-hud {
+      position: fixed;
+      top: 16px;
+      right: 20px;
+      z-index: 22;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 14px;
+      background: rgba(10, 10, 26, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(100, 180, 255, 0.15);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 0 20px rgba(100, 180, 255, 0.08);
+      font-family: 'JetBrains Mono', monospace;
+      color: rgba(255, 255, 255, 0.85);
+      transition: all 0.3s cubic-bezier(.4,0,.2,1);
+      pointer-events: none;
+    }
+    #gesture-hud.visible { display: flex; }
+    #gesture-hud .gesture-icon {
+      font-size: 1.4rem;
+      filter: drop-shadow(0 0 6px rgba(100, 180, 255, 0.4));
+    }
+    #gesture-hud .gesture-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    #gesture-hud .gesture-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #64b4ff;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    #gesture-hud .gesture-conf {
+      font-size: 0.6rem;
+      color: rgba(255, 255, 255, 0.35);
+      letter-spacing: 0.5px;
+    }
+    #gesture-hud .gesture-conf .conf-bar {
+      display: inline-block;
+      width: 60px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      margin-left: 6px;
+      position: relative;
+      vertical-align: middle;
+    }
+    #gesture-hud .gesture-conf .conf-fill {
+      position: absolute;
+      left: 0; top: 0; height: 100%;
+      background: linear-gradient(90deg, #00ffe5, #64b4ff);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+    #gesture-hud .gesture-action {
+      font-size: 0.55rem;
+      color: rgba(0, 255, 229, 0.5);
+      margin-top: 1px;
+    }
+
+    /* ══════════════════════════════════════════════
+       VOICE COMMAND PANEL
+    ══════════════════════════════════════════════ */
+    #voice-panel {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 28;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      background: rgba(10, 10, 26, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(100, 180, 255, 0.12);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.6);
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+    #voice-panel.visible { display: flex; }
+    #voice-panel.listening {
+      border-color: rgba(0, 255, 229, 0.3);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 0 20px rgba(0, 255, 229, 0.12);
+    }
+    #voice-panel .voice-indicator {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #555;
+      transition: all 0.3s;
+      flex-shrink: 0;
+    }
+    #voice-panel.listening .voice-indicator {
+      background: #00ffe5;
+      box-shadow: 0 0 10px #00ffe5;
+      animation: voicePulse 1.2s ease infinite;
+    }
+    @keyframes voicePulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.7; }
+    }
+    #voice-panel .voice-text {
+      max-width: 300px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ── Voice Toggle Button ── */
+    #voice-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 76px;
+      z-index: 30;
+      display: none;
+      width: 44px; height: 44px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50%;
+      background: rgba(10, 10, 26, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 44px;
+      text-align: center;
+      color: rgba(255,255,255,0.5);
+      transition: all 0.3s;
+      box-shadow: 0 0 16px rgba(100,180,255,0.08);
+    }
+    #voice-btn:hover {
+      transform: scale(1.1);
+      border-color: rgba(100,180,255,0.3);
+      box-shadow: 0 0 24px rgba(100,180,255,0.2);
+    }
+    #voice-btn.active {
+      border-color: rgba(0,255,229,0.4);
+      color: #00ffe5;
+      box-shadow: 0 0 20px rgba(0,255,229,0.15);
+    }
+
+    /* ══════════════════════════════════════════════
+       SESSION ANALYTICS OVERLAY
+    ══════════════════════════════════════════════ */
+    #analytics-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(5, 5, 16, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    #analytics-overlay.visible { display: flex; }
+    #analytics-card {
+      width: 90%;
+      max-width: 540px;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 32px;
+      border-radius: 20px;
+      background: rgba(15, 15, 32, 0.95);
+      border: 1px solid rgba(100, 180, 255, 0.15);
+      box-shadow: 0 8px 48px rgba(0, 0, 0, 0.5), 0 0 40px rgba(100, 180, 255, 0.06);
+      animation: panelIn 0.3s ease-out;
+    }
+    #analytics-card h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      color: #64b4ff;
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+    }
+    #analytics-content {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    #analytics-content h3 {
+      color: #00ffe5;
+      font-size: 0.78rem;
+      margin: 12px 0 6px;
+      letter-spacing: 1px;
+    }
+    #analytics-content strong {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    .analytics-close-btn {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 10px 28px;
+      border: 1px solid rgba(100,180,255,0.2);
+      border-radius: 10px;
+      background: transparent;
+      color: #64b4ff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+    }
+    .analytics-close-btn:hover {
+      background: rgba(100,180,255,0.1);
+      border-color: rgba(100,180,255,0.4);
+    }
+
+    /* ── Neural Model Status Bar ── */
+    #neural-status {
+      position: fixed;
+      bottom: 70px;
+      right: 20px;
+      z-index: 25;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      background: rgba(10, 10, 26, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.06);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      color: rgba(255,255,255,0.3);
+      pointer-events: none;
+    }
+    #neural-status.visible { display: flex; }
+    #neural-status .ns-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #ffe600;
+      box-shadow: 0 0 6px #ffe600;
+      animation: blink 1.5s infinite;
+    }
+    #neural-status.ready .ns-dot {
+      background: #00ffe5;
+      box-shadow: 0 0 6px #00ffe5;
+      animation: none;
+    }
+
+    @media (max-width: 768px) {
+      #gesture-hud { top: auto; bottom: 60px; right: 10px; padding: 8px 14px; }
+      #voice-panel { top: 8px; padding: 6px 14px; font-size: 0.65rem; }
+      #voice-btn { width: 38px; height: 38px; font-size: 1rem; right: 62px; bottom: 14px; }
+      #neural-status { bottom: 56px; right: 14px; }
+    }
   </style>
 </head>
 <body>
@@ -604,14 +865,16 @@
   <div id="splash">
     <canvas id="splash-particles"></canvas>
     <div class="splash-content">
-      <div class="version-badge">v4.0 · MediaPipe Hands</div>
+      <div class="version-badge">v5.0 · NLP + Deep Learning + MediaPipe</div>
       <h1>FLUX</h1>
-      <p class="tagline">Interactive Hand Tracking Experience</p>
+      <p class="tagline">Neural Interactive Hand Tracking Experience</p>
       <div class="features">
         <div class="feature-chip"><span class="chip-icon">⚡</span> Laser Beams</div>
         <div class="feature-chip"><span class="chip-icon">✏️</span> Air Writing</div>
         <div class="feature-chip"><span class="chip-icon">🖱️</span> OS Control</div>
-        <div class="feature-chip"><span class="chip-icon">📸</span> Screenshot</div>
+        <div class="feature-chip"><span class="chip-icon">🧠</span> Neural Gestures</div>
+        <div class="feature-chip"><span class="chip-icon">🗣️</span> Voice Commands</div>
+        <div class="feature-chip"><span class="chip-icon">📊</span> AI Analytics</div>
       </div>
       <button id="start-btn">LAUNCH</button>
     </div>
@@ -634,6 +897,7 @@
       <div>BEAMS <span id="stat-beams">0</span></div>
       <div>TOUCHES <span id="stat-touches">0</span></div>
       <div>STROKES <span id="stat-strokes">0</span></div>
+      <div>VOICE <span id="stat-voice">0</span></div>
     </div>
   </div>
 
@@ -666,6 +930,43 @@
     <p style="font-size: 0.75rem;"><span class="key">✦ Move Story:</span> Pinch (Thumb + Index)</p>
   </div>
 
+  <!-- Neural Gesture HUD -->
+  <div id="gesture-hud">
+    <span class="gesture-icon" id="gesture-icon">🤚</span>
+    <div class="gesture-info">
+      <span class="gesture-name" id="gesture-name">DETECTING...</span>
+      <span class="gesture-conf">
+        <span id="gesture-conf-text">0%</span>
+        <span class="conf-bar"><span class="conf-fill" id="gesture-conf-fill" style="width:0%"></span></span>
+      </span>
+      <span class="gesture-action" id="gesture-action"></span>
+    </div>
+  </div>
+
+  <!-- Voice Command Panel -->
+  <div id="voice-panel">
+    <span class="voice-indicator"></span>
+    <span class="voice-text" id="voice-text">Voice Ready</span>
+  </div>
+
+  <!-- Voice Toggle Button -->
+  <button id="voice-btn" title="Voice Commands (V)">🎙️</button>
+
+  <!-- Neural Model Status -->
+  <div id="neural-status">
+    <span class="ns-dot"></span>
+    <span id="neural-status-text">Neural Engine Loading...</span>
+  </div>
+
+  <!-- Session Analytics Overlay -->
+  <div id="analytics-overlay">
+    <div id="analytics-card">
+      <h2>📊 SESSION ANALYTICS</h2>
+      <div id="analytics-content"></div>
+      <button class="analytics-close-btn" id="analytics-close">CLOSE</button>
+    </div>
+  </div>
+
   <!-- Settings gear button -->
   <button id="settings-btn" title="Settings">⚙️</button>
 
@@ -684,6 +985,9 @@
     <div class="shortcut-row"><span class="shortcut-key">F</span> Fullscreen</div>
     <div class="shortcut-row"><span class="shortcut-key">S</span> Screenshot</div>
     <div class="shortcut-row"><span class="shortcut-key">C</span> Clear Canvas</div>
+    <div class="shortcut-row"><span class="shortcut-key">V</span> Voice Commands</div>
+    <div class="shortcut-row"><span class="shortcut-key">A</span> Session Analytics</div>
+    <div class="shortcut-row"><span class="shortcut-key">G</span> Toggle Gesture HUD</div>
   </div>
 
   <!-- Settings panel -->
@@ -715,6 +1019,14 @@
   <!-- MediaPipe Hands via CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1675466862/camera_utils.min.js"></script>
+
+  <!-- TensorFlow.js for Neural Gesture Classifier -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
+
+  <!-- Flux Neural Modules -->
+  <script src="js/gestureClassifier.js"></script>
+  <script src="js/voiceCommands.js"></script>
+  <script src="js/sessionAnalytics.js"></script>
 
   <script>
   (() => {
@@ -1421,6 +1733,7 @@
         strokes.push(currentStroke);
         bakedCtx.drawImage(drawCanvas, 0, 0);
         updateStats(0, 0, 1);
+        if (window.FluxAnalytics) window.FluxAnalytics.recordStroke();
       }
       
       drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
@@ -1657,6 +1970,7 @@
        Particle system
     ──────────────────────────────────────────── */
     function spawnParticles(x, y, color, count = 18) {
+      if (window.FluxAnalytics) window.FluxAnalytics.recordParticles(count);
       for (let i = 0; i < count; i++) {
         if (particles.length >= MAX_PARTICLES) particles.shift();
         const angle = Math.random() * Math.PI * 2;
@@ -1907,6 +2221,50 @@
         }
       }
       updateDrawHud();
+
+      // ── Neural Gesture Classification (runs per-frame on detected hands) ──
+      const classifyHand = rightHand || leftHand;
+      if (classifyHand && window.FluxGestureClassifier && window.FluxGestureClassifier.loaded) {
+        window.FluxGestureClassifier.classify(classifyHand).then(result => {
+          if (result && gestureHudEnabled) {
+            // Update Gesture HUD
+            const gestHud = document.getElementById('gesture-hud');
+            gestHud.classList.add('visible');
+            document.getElementById('gesture-icon').textContent = result.displayName.split(' ')[0];
+            document.getElementById('gesture-name').textContent = result.displayName.split(' ').slice(1).join(' ') || result.gesture;
+            document.getElementById('gesture-conf-text').textContent = result.confidence + '%';
+            document.getElementById('gesture-conf-fill').style.width = result.confidence + '%';
+            
+            // Show pending action hint
+            const actionEl = document.getElementById('gesture-action');
+            if (result.action && result.holdFrames > 10) {
+              const remaining = Math.max(0, 20 - result.holdFrames);
+              actionEl.textContent = remaining > 0 
+                ? `Hold ${remaining} more frames → ${result.action.replace('_', ' ')}`
+                : `✓ ${result.action.replace('_', ' ')} triggered!`;
+            } else {
+              actionEl.textContent = '';
+            }
+
+            // Record to analytics
+            if (window.FluxAnalytics) window.FluxAnalytics.recordGesture(result.gesture, result.confidence);
+
+            // Check if gesture should trigger an action
+            const action = window.FluxGestureClassifier.checkAction(result.gesture, result.holdFrames);
+            if (action) {
+              handleGestureAction(action);
+            }
+          }
+        }).catch(() => {});
+      } else {
+        document.getElementById('gesture-hud').classList.remove('visible');
+      }
+
+      // Record FPS to analytics (every second)
+      if (window.FluxAnalytics && frameCount === 0 && fpsElement) {
+        const fpsVal = parseInt(fpsElement.textContent.replace('FPS: ', ''));
+        if (!isNaN(fpsVal)) window.FluxAnalytics.recordFPS(fpsVal);
+      }
 
       // Show status HUD when hand detected
       const anyHand = leftHand || rightHand;
@@ -2193,18 +2551,142 @@
         hud.style.display = "block";
         settingsBtn.style.display = "block";
         document.getElementById('toolbar').classList.add('visible');
+        document.getElementById('voice-btn').style.display = 'block';
 
         // initAudio(); // Muted at user request
         initMediaPipe();
         initSettingsPanel();
         initToolbar();
         initKeyboardShortcuts();
+        initNeuralModules();  // ← NEW: Neural gesture + voice + analytics
         requestAnimationFrame(render);
         showToast('✅ Camera connected — tracking started');
       } catch (err) {
         alert("Camera access is required.\n\n" + err.message);
       }
     });
+
+    /* ────────────────────────────────────────────
+       Neural Module Initialization
+    ──────────────────────────────────────────── */
+    let gestureHudEnabled = true;
+    let voiceCommandCount = 0;
+    const statVoiceEl = document.getElementById('stat-voice');
+
+    async function initNeuralModules() {
+      // 1. Neural Gesture Classifier
+      const neuralStatus = document.getElementById('neural-status');
+      const neuralStatusText = document.getElementById('neural-status-text');
+      neuralStatus.classList.add('visible');
+
+      try {
+        neuralStatusText.textContent = 'Training gesture model...';
+        await window.FluxGestureClassifier.init();
+        neuralStatusText.textContent = 'Neural Gesture Classifier Ready';
+        neuralStatus.classList.add('ready');
+        showToast('🧠 Neural Gesture Classifier trained & ready');
+      } catch (e) {
+        neuralStatusText.textContent = 'Gesture model: heuristic fallback';
+        neuralStatus.classList.add('ready');
+      }
+
+      // Auto-hide neural status after 4s
+      setTimeout(() => {
+        neuralStatus.classList.remove('visible');
+      }, 4000);
+
+      // 2. Voice Command Engine
+      if (window.FluxVoiceEngine.init()) {
+        window.FluxVoiceEngine.onCommand(handleVoiceCommand);
+        window.FluxVoiceEngine.onStatus((status) => {
+          const voicePanel = document.getElementById('voice-panel');
+          const voiceBtn = document.getElementById('voice-btn');
+          if (status.listening) {
+            voicePanel.classList.add('visible', 'listening');
+            voiceBtn.classList.add('active');
+          } else {
+            voicePanel.classList.remove('listening');
+            voiceBtn.classList.remove('active');
+            setTimeout(() => voicePanel.classList.remove('visible'), 1500);
+          }
+        });
+        window.FluxVoiceEngine.onTranscript((t) => {
+          document.getElementById('voice-text').textContent = t.text;
+        });
+      }
+
+      // 3. Session Analytics
+      window.FluxAnalytics.startSession();
+
+      // 4. Analytics overlay close
+      document.getElementById('analytics-close').addEventListener('click', () => {
+        document.getElementById('analytics-overlay').classList.remove('visible');
+      });
+
+      // 5. Voice button click
+      document.getElementById('voice-btn').addEventListener('click', () => {
+        window.FluxVoiceEngine.toggle();
+      });
+    }
+
+    /** Handle a recognized voice command action */
+    function handleVoiceCommand(match) {
+      voiceCommandCount++;
+      if (statVoiceEl) statVoiceEl.textContent = voiceCommandCount;
+      if (window.FluxAnalytics) window.FluxAnalytics.recordCommand(match.action, 'voice');
+
+      showToast(`🗣️ "${match.transcript}" → ${match.action} (${match.confidence}%)`);
+
+      switch (match.action) {
+        case 'mode_laser':
+          document.getElementById('mode-laser').click();
+          break;
+        case 'mode_write':
+          document.getElementById('mode-write').click();
+          break;
+        case 'mode_os':
+          document.getElementById('mode-os').click();
+          break;
+        case 'clear':
+          clearDrawCanvas();
+          spawnParticles(canvas.width / 2, canvas.height / 2, COLORS.white, 40);
+          break;
+        case 'screenshot':
+          takeScreenshot();
+          break;
+        case 'fullscreen':
+          toggleFullscreen();
+          break;
+        case 'color_0': case 'color_1': case 'color_2':
+        case 'color_3': case 'color_4': case 'color_5':
+          const idx = parseInt(match.action.split('_')[1]);
+          drawColorIdx = idx;
+          colorRow.querySelectorAll('.color-pick').forEach((d, i) => {
+            d.classList.toggle('active', i === idx);
+          });
+          break;
+        case 'stop_voice':
+          window.FluxVoiceEngine.stop();
+          break;
+      }
+    }
+
+    /** Show analytics overlay */
+    function showSessionAnalytics() {
+      if (!window.FluxAnalytics) return;
+      const summary = window.FluxAnalytics.generateSummary();
+      
+      // Convert markdown to simple HTML
+      let html = summary.markdown
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n\n/g, '<br><br>')
+        .replace(/\n/g, '<br>');
+      
+      document.getElementById('analytics-content').innerHTML = html;
+      document.getElementById('analytics-overlay').classList.add('visible');
+    }
 
     /* ────────────────────────────────────────────
        Settings Panel Logic
@@ -2227,6 +2709,7 @@
       modeLaserBtn.addEventListener('click', () => {
         exitPiP();
         appMode = 'laser';
+        if (window.FluxAnalytics) window.FluxAnalytics.recordModeSwitch('laser');
         modeLaserBtn.classList.add('active');
         modeWriteBtn.classList.remove('active');
         document.getElementById('mode-os').classList.remove('active');
@@ -2249,6 +2732,7 @@
       modeWriteBtn.addEventListener('click', () => {
         exitPiP();
         appMode = 'write';
+        if (window.FluxAnalytics) window.FluxAnalytics.recordModeSwitch('write');
         modeWriteBtn.classList.add('active');
         modeLaserBtn.classList.remove('active');
         document.getElementById('mode-os').classList.remove('active');
@@ -2259,6 +2743,7 @@
 
       document.getElementById('mode-os').addEventListener('click', async () => {
         appMode = 'os';
+        if (window.FluxAnalytics) window.FluxAnalytics.recordModeSwitch('os');
         // Reset OS smoothing for fresh start
         osSmoothedIndex = null; osSmoothedThumb = null; osSmoothedMiddle = null;
         osOutX = null; osOutY = null; osVelocity = 0;
@@ -2436,8 +2921,52 @@ if %errorlevel% neq 0 (
           clearDrawCanvas();
           spawnParticles(canvas.width / 2, canvas.height / 2, COLORS.white, 40);
           showToast('🗑️ Canvas cleared');
+        } else if (key === 'v') {
+          // Voice commands toggle
+          if (window.FluxVoiceEngine) {
+            window.FluxVoiceEngine.toggle();
+            showToast(window.FluxVoiceEngine.isListening ? '🎙️ Voice: Listening...' : '🎙️ Voice: Off');
+          }
+        } else if (key === 'a') {
+          // Session analytics
+          showSessionAnalytics();
+        } else if (key === 'g') {
+          // Toggle gesture HUD
+          gestureHudEnabled = !gestureHudEnabled;
+          if (!gestureHudEnabled) document.getElementById('gesture-hud').classList.remove('visible');
+          showToast(gestureHudEnabled ? '🧠 Gesture HUD: ON' : '🧠 Gesture HUD: OFF');
         }
       });
+    }
+
+    /** Handle gesture-triggered actions */
+    function handleGestureAction(action) {
+      if (window.FluxAnalytics) window.FluxAnalytics.recordCommand(action, 'gesture');
+      showToast(`🤚 Gesture → ${action.replace('_', ' ')}`);
+
+      switch (action) {
+        case 'screenshot':
+          takeScreenshot();
+          if (window.FluxAnalytics) window.FluxAnalytics.recordScreenshot();
+          break;
+        case 'clear_canvas':
+          clearDrawCanvas();
+          spawnParticles(canvas.width / 2, canvas.height / 2, COLORS.white, 40);
+          break;
+        case 'save_session':
+          showSessionAnalytics();
+          break;
+        case 'toggle_audio':
+          // Future: toggle audio reactive mode
+          showToast('🔊 Audio mode (coming soon)');
+          break;
+        case 'cycle_color':
+          drawColorIdx = (drawColorIdx + 1) % DRAW_COLORS.length;
+          colorRow.querySelectorAll('.color-pick').forEach((d, i) => {
+            d.classList.toggle('active', i === drawColorIdx);
+          });
+          break;
+      }
     }
   })();
   </script>
